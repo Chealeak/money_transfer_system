@@ -5,6 +5,10 @@ import (
 	"fmt"
 )
 
+var (
+	ErrInsufficientFunds = errors.New("insufficient funds")
+)
+
 type User struct {
 	ID      string
 	Name    string
@@ -17,7 +21,7 @@ func (u *User) Deposit(amount float64) {
 
 func (u *User) Withdraw(amount float64) error {
 	if u.Balance < amount {
-		return errors.New("insufficient funds")
+		return ErrInsufficientFunds
 	}
 
 	u.Balance -= amount
@@ -40,7 +44,8 @@ func main() {
 	user3.Withdraw(1100)
 	user3.Withdraw(300.55)
 
-	for _, u := range [3]*User{user1, user2, user3} {
-		fmt.Printf("%s balance: %f\n", u.Name, u.Balance)
+	users := []*User{user1, user2, user3}
+	for i := range users {
+		fmt.Printf("%s balance: %f\n", users[i].Name, users[i].Balance)
 	}
 }
