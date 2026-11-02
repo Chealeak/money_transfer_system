@@ -29,9 +29,9 @@ func (u *User) Withdraw(amount float64) error {
 }
 
 func main() {
-	user1 := &User{"User1", "Peter", 1000}
-	user2 := &User{"User2", "Sarah", 2000}
-	user3 := &User{"User3", "Michael", 3000}
+	user1 := &User{ID: "User1", Name: "Peter", Balance: 1000}
+	user2 := &User{ID: "User2", Name: "Sarah", Balance: 2000}
+	user3 := &User{ID: "User3", Name: "Michael", Balance: 3000}
 
 	user1.Deposit(230.26)
 	user1.Withdraw(100)
