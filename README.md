@@ -4,12 +4,18 @@ A command-line program in Go. Users keep a balance, and a payment system moves m
 
 ## How to run
 
-[Go](https://go.dev/dl/) 1.25 or later is required (`sync.WaitGroup.Go`).
+[Go](https://go.dev/dl/) 1.26.4 or later is required, as declared in `go.mod`. The workers are started with `wg.Add(1)` and `go ps.Worker(ch, &wg)`.
 
 From the project directory:
 
 ```bash
 go run main.go
+```
+
+To run the program with the race detector:
+
+```bash
+go run -race ./...
 ```
 
 The program registers three users, queues three transfers, and lets three workers process them. Lines that start with `Transaction completed` can appear in any order. The balances for this data are:
