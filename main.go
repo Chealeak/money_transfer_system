@@ -93,8 +93,12 @@ func main() {
 	}
 
 	for _, t := range ps.TransactionQueue {
-		ps.ProcessingTransactions(t)
-		fmt.Printf("Transaction completed: %s sent %f to %s\n", t.FromID, t.Amount, t.ToID)
+		err := ps.ProcessingTransactions(t)
+		if err != nil {
+			fmt.Println("An error occurred during the transaction:", err)
+		} else {
+			fmt.Printf("Transaction completed: %s sent %f to %s\n", t.FromID, t.Amount, t.ToID)
+		}
 	}
 
 	fmt.Println("Result:")
