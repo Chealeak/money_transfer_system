@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"sync"
 )
 
 var (
@@ -69,6 +70,17 @@ func (ps *PaymentSystem) ProcessingTransactions(transaction Transaction) error {
 	return nil
 }
 
+func (ps *PaymentSystem) Worker(ch <-chan Transaction) {
+	for t := range ch {
+		err := ps.ProcessingTransactions(t)
+		if err != nil {
+			fmt.Println("An error occurred during the transaction:", err)
+		} else {
+			fmt.Printf("Transaction completed: %s sent %f to %s\n", t.FromID, t.Amount, t.ToID)
+		}
+	}
+}
+
 func main() {
 	ps := &PaymentSystem{Users: make(map[string]*User)}
 
@@ -92,13 +104,25 @@ func main() {
 		fmt.Printf("Transaction added to queue: %s sent %f to %s\n", transactions[i].FromID, transactions[i].Amount, transactions[i].ToID)
 	}
 
-	for _, t := range ps.TransactionQueue {
-		ps.ProcessingTransactions(t)
-		fmt.Printf("Transaction completed: %s sent %f to %s\n", t.FromID, t.Amount, t.ToID)
+	ch := make(chan Transaction, len(ps.TransactionQueue))
+	var wg sync.WaitGroup
+
+	for range 3 {
+		wg.Go(func() {
+			ps.Worker(ch)
+		})
 	}
 
+	for _, t := range ps.TransactionQueue {
+		ch <- t
+	}
+
+	close(ch)
+
+	wg.Wait()
+
 	fmt.Println("Result:")
-	for i := range users {
-		fmt.Printf("%s has balance %f\n", users[i].ID, users[i].Balance)
+	for _, user := range users {
+		fmt.Printf("%s has balance %f\n", user.ID, user.Balance)
 	}
 }
