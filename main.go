@@ -45,7 +45,8 @@ func main() {
 	user3.Withdraw(300.55)
 
 	users := []*User{user1, user2, user3}
-	for i := range users {
-		fmt.Printf("%s balance: %f\n", users[i].Name, users[i].Balance)
+	fmt.Println("Result:")
+	for _, user := range users {
+		fmt.Printf("%s has balance %f\n", user.ID, user.Balance)
 	}
 }
