@@ -70,7 +70,9 @@ func (ps *PaymentSystem) ProcessingTransactions(transaction Transaction) error {
 	return nil
 }
 
-func (ps *PaymentSystem) Worker(ch <-chan Transaction) {
+func (ps *PaymentSystem) Worker(ch <-chan Transaction, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	for t := range ch {
 		err := ps.ProcessingTransactions(t)
 		if err != nil {
@@ -108,9 +110,8 @@ func main() {
 	var wg sync.WaitGroup
 
 	for range 3 {
-		wg.Go(func() {
-			ps.Worker(ch)
-		})
+		wg.Add(1)
+		go ps.Worker(ch, &wg)
 	}
 
 	for _, t := range ps.TransactionQueue {
