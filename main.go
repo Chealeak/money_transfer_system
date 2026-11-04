@@ -98,7 +98,7 @@ func main() {
 	}
 
 	fmt.Println("Result:")
-	for i := range users {
-		fmt.Printf("%s has balance %f\n", users[i].ID, users[i].Balance)
+	for _, user := range users {
+		fmt.Printf("%s has balance %f\n", user.ID, user.Balance)
 	}
 }
